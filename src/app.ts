@@ -15,13 +15,13 @@ function showHello(divName: string, name: string) {
 
 enum Category { 'JavaScript', 'CSS', 'HTML', 'TypeScript', 'Angular' }
 
-type Book = {
-    id: number;
-    title: string;
-    author: string;
-    available: boolean;
-    category: Category;
-};
+// type Book = {
+//     id: number;
+//     title: string;
+//     author: string;
+//     available: boolean;
+//     category: Category;
+// };
 
 function getAllBooks(): readonly Book[] {
     const books = <const>[
@@ -141,7 +141,7 @@ function createCustomer(name: string, age?: number, city?: string): void {
 // Створіть функцію getBookByID(), яка приймає id книжки та повертає книжку. Використовуйте функцію getAllBooks(),
 // метод масиву find() та стрілочну функцію. Викличте функцію та передайте їй 1.
 
-function getBookByID(id: number): Book {
+function getBookByID(id: Book['id']): Book | undefined {
     const books = getAllBooks();
     return books.find(book => book.id === id);
 }
@@ -251,6 +251,223 @@ function bookTitleTransform(title: any): string {
 
 // console.log('------------------------------------------------------');
 
+// ================================================================
 
+// 04. Interfaces
 
+// Task 04.01. Defining an Interface
+
+// ================================================================
+
+// 1. Оголосіть інтерфейс Book, який включає такі поля:
+// a. id - число
+// b. title - рядок
+// c. author - рядок
+// d. available - логічний
+// e. category – категорія
+
+interface Book {
+    id: number;
+    title: string;
+    author: string;
+    available: boolean;
+    category: Category;
+    pages?: number;
+    // markDamaged?: (reason: string) => void; // варіант 1 (властивість)
+    // markDamaged?(reason: string): void; // варіант 2 (метод)
+    markDamaged?: DamageLogger; // варіант 3
+}
+
+// 2. Внесіть зміни в функцію getAllBooks(), вкажіть тип змінної books і тип значення, що повертається,
+// використовуючи оголошений вище інтерфейс Book. Додайте модифікатор readonly. Видаліть
+// тимчасово id у книжки та побачите, що з'явиться помилка.
+
+// +
+
+// 3. Внесіть зміни в функцію getBookByID(), вкажіть тип Book['id'] для параметра id, а також вкажіть тип
+// значення, що повертається, використовуючи оголошений вище інтерфейс Book. Можливо,
+// доведеться додати об'єднання з типом undefined, оскільки метод find, якщо не знайде елемент,
+// поверне undefined.
+
+// +
+
+// 4. Створіть функцію printBook(), яка на вхід приймає книгу та виводить у консоль фразу book.title + by
+// + book.author. Використайте інтерфейс Book для типу параметра.
+
+function printBook(book: Book): void {
+    console.log(`${book.title} by ${book.author}`);
+}
+
+// 5. Оголосіть змінну myBook і надайте їй наступний об'єкт
+// {
+//  id: 5,
+//  title: 'Colors, Backgrounds, and Gradients',
+//  author: 'Eric A. Meyer',
+//  available: true,
+//  category: Category.CSS,
+//  year: 2015,
+//  copies: 3
+// }
+
+let myBook: Book = {
+    // let myBook = {
+    id: 5,
+    title: 'Colors, Backgrounds, and Gradients',
+    author: 'Eric A. Meyer',
+    available: true,
+    category: Category.CSS,
+    // markDamaged: (reason: string) => console.log(`Damaged: ${reason}`) // варіант 1
+    markDamaged(reason: string) {
+        console.log(`Damaged: ${reason}`); // варіант 2
+    }
+    // year: 2015,
+    // copies: 3
+};
+
+// 6. Викличте функцію printBook() та передайте їй myBook. Жодних помилок при цьому не повинно з'являтися.
+
+// printBook(myBook);
+
+// 7. Додайте до інтерфейсу Book властивість pages: number. Ви отримаєте помилку у функції
+// getAllBooks(). Щоб помилка не виникала, зробіть властивість необов'язковою.
+
+// +
+
+// 8. Вкажіть явно для змінної myBook тип Book. Ви знову отримаєте помилку. Видаліть властивості
+// year, copies. Додайте властивість pages: 200.
+
+// +
+
+// 9. Додайте в інтерфейс Book необов'язкову властивість markDamaged, яка є методом. Метод
+// приймає на вхід рядковий параметр reason і нічого не повертає. Додайте цей метод до myBook.
+// Метод повинен виводити рядок `Damaged: ${reason}`. Викличте цей метод та передайте рядок
+// 'missing back cover'.
+
+myBook.markDamaged('missing back cover');
+
+// Task 04.02. Defining an Interface for Function Types
+
+// 1. Оголосіть інтерфейс DamageLogger, який описуватиме тип функції, яка приймає один рядковий
+// параметр і нічого не повертає.
+
+// ?? ...який описуватиме тип функції... ??
+
+interface DamageLogger {
+    (reason: string): void;
+}
+
+// 2. Внесіть зміни до інтерфейсу Book: використовуйте оголошений інтерфейс DamageLogger для поля
+// markDamaged.
+
+// +
+
+// 3. Оголосіть змінну logDamage, використовуючи оголошений раніше інтерфейс DamageLogger.
+// Створіть функцію, яка задовольняє цьому інтерфейсу, і надайте її оголошеній змінній. Викличте
+// функцію.
+
+const logDamage: DamageLogger = (reason: string) => console.log(`Damaged: ${reason}`);
+
+logDamage('missing back cover');
+
+// Task 04.03. Extending Interface
+
+// 1. Оголосіть інтерфейс Person, який містить дві рядкові властивості – name і email.
+
+interface Person {
+    name: string;
+    email: string;
+}
+
+// 2. Оголосіть інтерфейс Author на основі інтерфейсу Person, який розширює вказаний інтерфейс
+// числовою властивістю numBooksPublished.
+
+interface Author extends Person {
+    numBooksPublished: number;
+}
+
+// 3. Оголосіть інтерфейс Librarian на основі інтерфейсу Person, який розширює цей інтерфейс двома
+// властивостями:
+// a. Рядкова властивість department
+// b. Функція assistCustomer, яка приймає два рядкові параметри custName і bookTitle і
+// нічого не повертає.
+
+interface Librarian extends Person {
+    department: string;
+    // assistCustomer(custName: string, bookTitle: string): void; // v1
+    assistCustomer: (custName: string, bookTitle: string) => void; // v2
+}
+
+// 4. Оголосіть змінну favoriteAuthor, використовуючи інтерфейс Author, задайте значення у вигляді
+// літерала об'єкта.
+
+const favoriteAuthor: Author = {
+    name: 'Stas',
+    email: 'mail@com.ua',
+    numBooksPublished: 10
+};
+
+// 5. Оголосіть змінну favoriteLibrarian, використовуючи інтерфейс Librarian, задайте значення у вигляді
+// літерала об'єкта
+
+const favoriteLibrarian: Librarian = {
+    name: 'Vika',
+    email: 'www@post.ua',
+    department: 'dep',
+    assistCustomer: null, // ?
+};
+
+// favoriteLibrarian.department = 'Department';
+
+// Task 04.04. Optional Chaining
+
+// 1. Оголосіть змінну offer наступного виду:
+// const offer: any = {
+//  book: {
+//  title: 'Essential TypeScript',
+//  },
+// };
+
+const offer: any = {
+    book: {
+        title: 'Essential TypeScript',
+    },
+};
+
+// 2. Виведіть у консоль значення таких виразів, використовуючи оператор optional chaining (?.)
+// a. offer.magazine
+// b. offer.magazine.getTitle()
+// c. offer.book.getTitle()
+// d. offer.book.authors[0]
+
+console.log(offer.magazine);
+console.log(offer.magazine?.getTitle());
+console.log(offer.book.getTitle?.()); // is not a function (...undefined)
+console.log(offer.book.authors?.[0]);
+console.log(offer.book.authors?.[10]?.val);
+
+// Task 04.05. Keyof Operator
+// 1. Оголосіть тип BookProperties, який включає властивості інтерфейсу Book, використовуючи keyof
+// оператор.
+
+type BookProperties = keyof Book;
+// type BookProperties = keyof Book | 'isbn';
+
+// 2. Реалізуйте функцію getProperty(), яка приймає два параметри:
+// a. книжку
+// b. назву властивості з інтерфейсу Book
+// і повертає значення цієї властивості з переданого об'єкта, якщо це не функція, для функції
+// повертає її ім'я. Використовуйте тип any для значення, що повертається.
+
+function getProperty(book: Book, prop: BookProperties): any {
+    const value = book[prop];
+    return typeof value === 'function' ? value.name : value;
+}
+
+// 3. Викличте цю функцію тричі зі значенням другого параметра: title, markDamaged, isbn
+
+console.log(getProperty(myBook, 'title'));
+console.log(getProperty(myBook, 'markDamaged'));
+// console.log(getProperty(myBook, 'isbn')); // error
+
+console.log('------------------------------------------------------');
 
