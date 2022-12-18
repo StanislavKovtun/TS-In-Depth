@@ -1,7 +1,11 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable no-redeclare */
-
 // TypeScript In-Depth
+
+import { ReferenceItem, UL, RefBook, Library } from './classes';
+import { Category } from './enums';
+import { Author, Book, Librarian, Logger } from './interfaces';
+import { PersonBook } from './types';
+// import RefBook from './classes/encyclopedia';
+import { printRefBook, calcTotalPages, getAllBooks, getBooksAuthorByIndex, getBookTitlesByCategory } from './functions';
 
 showHello('greeting', 'TypeScript');
 
@@ -13,85 +17,18 @@ function showHello(divName: string, name: string) {
 // ================================================================
 
 // 02. Types Basics
-
-enum Category { 'JavaScript', 'CSS', 'HTML', 'TypeScript', 'Angular' }
-
-// type Book = {
-//     id: number;
-//     title: string;
-//     author: string;
-//     available: boolean;
-//     category: Category;
-// };
-
-function getAllBooks(): readonly Book[] {
-    const books = <const>[
-        { id: 1, title: 'Refactoring JavaScript', author: 'Evan Burchard', available: true, category: Category.JavaScript },
-        { id: 2, title: 'JavaScript Testing', author: 'Liang Yuxian Eugene', available: false, category: Category.JavaScript },
-        { id: 3, title: 'CSS Secrets', author: 'Lea Verou', available: false, category: Category.CSS },
-        { id: 4, title: 'Mastering JavaScript Object-Oriented Programming', author: 'Andrea Chiarelli', available: true, category: Category.JavaScript }
-    ];
-    return books;
-}
-
 // console.log(getAllBooks());
-
-
-function logFirstAvailable(books: readonly Book[] = getAllBooks()): void { // ## + readonly!!!
-    console.log(`Number of books: ${books.length}`);
-    const title = books.find(({ available }) => available === true)?.title;// деструктуризація + ?.
-    console.log(`First available book: ${title}`);
-}
-
 // logFirstAvailable(getAllBooks());
-
-function getBookTitlesByCategory(inputCategory: Category = Category.JavaScript): string[] {
-    const books = getAllBooks();
-    return books.filter(({ category }) => category === inputCategory).map(({ title }) => title);
-}
-
-function logBookTitles(titles: Array<string>): void {
-    titles.forEach(title => console.log(title));
-}
-
-// logBookTitles(getBookTitlesByCategory(Category.CSS));
-
-function getBooksAuthorByIndex(index: number): [title: string, author: string] {
-    const books = getAllBooks();
-    const { title, author } = books[index];
-    return [title, author];
-}
-
-// console.log(getBooksAuthorByIndex(0));
-
-function calcTotalPages(): void {
-    const data = [
-        { lib: 'libName1', books: 1_000_000_000, avgPagesPerBook: 250 },
-        { lib: 'libName2', books: 5_000_000_000, avgPagesPerBook: 300 },
-        { lib: 'libName3', books: 3_000_000_000, avgPagesPerBook: 280 }
-    ];
-    const r = data.reduce((acc: bigint, obj) => {
-        return acc + BigInt(obj.books) * BigInt(obj.avgPagesPerBook);
-    }, 0n);
-
-    console.log(r);
-};
-
 // calcTotalPages();
 
 // 03. Functions
-
 // Task 03.01. Function Type
 
 // Створіть функцію createCustomerID(), яка приймає ім'я клієнта (name: string) та його ідентифікатор (id: number)
 // та повертає конкатенацію цих значень у вигляді рядка.
 // Об’явіть змінну myID рядкового типу та викличте функцію зі значеннями Ann, 10. Отримане значення виведіть у консоль.
 
-function createCustomerID(name: string, id: number): string {
-    return `${name} ${id}`;
-}
-
-let myID: string = createCustomerID('Ann', 10);
+// let myID: string = createCustomerID('Ann', 10);
 // console.log(myID);
 
 // Об’явіть змінну idGenerator і вкажіть тип функції createCustomerID().
@@ -101,9 +38,9 @@ let myID: string = createCustomerID('Ann', 10);
 // Отримане значення виведіть у консоль.
 
 // let idGenerator: (name: string, id: number) => string; // 1й спосіб задання функціонального типу
-let idGenerator: typeof createCustomerID; // 2й спосіб задання функціонального типу
-idGenerator = (name: string, id: number) => `${name} ${id}`;
-idGenerator = createCustomerID;
+// let idGenerator: typeof createCustomerID; // 2й спосіб задання функціонального типу
+// idGenerator = (name: string, id: number) => `${name} ${id}`;
+// idGenerator = createCustomerID;
 
 // // const a = typeof createCustomerID;
 // console.log(idGenerator('Boris', 20));
@@ -117,16 +54,6 @@ idGenerator = createCustomerID;
 // Функція повинна виводити ім'я клієнта в консоль, а також, якщо заданий вік, вона повинна додатково виводити вік у консоль.
 // Якщо задане місто, то додатково має виводити місто у консоль. Викличте цю функцію з одним, двома та трьома аргументами.
 
-function createCustomer(name: string, age?: number, city?: string): void {
-    let result: string = name;
-    if (age) {
-        result += ` ${age}`;
-    }
-    if (city) {
-        result += ` ${city}`;
-    }
-    console.log(result);
-}
 // createCustomer('Stas');
 // createCustomer('Stas', 35);
 // createCustomer('Stas', 35, 'Sumy');
@@ -143,10 +70,6 @@ function createCustomer(name: string, age?: number, city?: string): void {
 // метод масиву find() та стрілочну функцію. Викличте функцію та передайте їй 1.
 
 // function getBookByID(id: Book['id']): Book | undefined {
-function getBookByID(id: Book['id']): BookOrUndefined {
-    const books = getAllBooks();
-    return books.find(book => book.id === id);
-}
 
 // console.log(getBookByID(1));
 
@@ -157,13 +80,6 @@ function getBookByID(id: Book['id']): BookOrUndefined {
 // які є доступними. (available = true). Використовуйте функцію getBookById().
 // Також функція повинна виводити в консоль ім'я заданого клієнта.
 
-function сheckoutBooks(customer: string, ...bookIDs: number[]) {
-    console.log(`Customer name: ${customer}`);
-    return bookIDs
-        .map(id => getBookByID(id))
-        .filter(book => book.available)
-        .map(book => book.title);
-}
 
 // console.log(сheckoutBooks('Customer1', 1, 3, 4));
 // console.log(сheckoutBooks('Customer1'));
@@ -188,31 +104,6 @@ function сheckoutBooks(customer: string, ...bookIDs: number[]) {
 // Функція повинна аналізувати кількість і типи параметрів за допомогою оператора typeof і формувати результуючий масив з масиву,
 // отриманого за допомогою функції getAllBooks(), аналізуючи властивості: book.author, book.available, book.id.
 
-function getTitles(author: string): string[];
-function getTitles(available: boolean): string[];
-function getTitles(id: number, available: boolean): string[];
-function getTitles(...args: [string | boolean] | [number, boolean]): string[] {
-    const books = getAllBooks();
-    if (args.length === 1) {
-        const [arg] = args;
-
-        if (typeof arg === 'string') {
-            return books.filter(book => book.author === arg)
-                .map(book => book.title);
-        } else if (typeof arg === 'boolean') {
-            return books.filter(book => book.available === arg)
-                .map(book => book.title);
-        }
-    } else if (args.length === 2) {
-        const [id, available] = args;
-
-        if (typeof id === 'number' && typeof available === 'boolean') {
-            // ця перевірка не обов'язкова, так як у нас тільки одна відповідна сигнатура
-            return books.filter(book => book.id === id && book.available === available)
-                .map(book => book.title);
-        }
-    }
-};
 // console.log(getTitles(1, true));
 // console.log(getTitles(true));
 // console.log(getTitles(false));
@@ -230,28 +121,10 @@ function getTitles(...args: [string | boolean] | [number, boolean]): string[] {
 // Функція повинна перевіряти, чи є тип переданого аргументу рядком.
 // Якщо ні, то генерувати виняток "value should have been a string".
 
-function assertStringValue(data: any): asserts data is string {
-    if (typeof data !== 'string') {
-        throw new Error('value should have been a string');
-    }
-}
-
-// Створіть функцію bookTitleTransform(), яка приймає один параметр – назву книжки (тип параметру any).
-// За допомогою assertStringValue перевіряє, чи назва книжки дійсно є рядком,
-// і якщо так, то повертає перевертень цього рядка,
-// використовуючи спред оператор і методи масиву reverse() і join().
-
-function bookTitleTransform(title: any): string {
-    assertStringValue(title);
-    return [...title].reverse().join('');
-}
-
 // Викличте функцію bookTitleTransform() двічі і передайте їй рядкове та числове значення.
 
 // console.log(bookTitleTransform('Learn TS'));
 // console.log(bookTitleTransform(123));
-
-// console.log('------------------------------------------------------');
 
 // ================================================================
 
@@ -268,18 +141,6 @@ function bookTitleTransform(title: any): string {
 // d. available - логічний
 // e. category – категорія
 
-interface Book {
-    id: number;
-    title: string;
-    author: string;
-    available: boolean;
-    category: Category;
-    pages?: number;
-    // markDamaged?: (reason: string) => void; // варіант 1 (властивість)
-    // markDamaged?(reason: string): void; // варіант 2 (метод)
-    markDamaged?: DamageLogger; // варіант 3
-}
-
 // 2. Внесіть зміни в функцію getAllBooks(), вкажіть тип змінної books і тип значення, що повертається,
 // використовуючи оголошений вище інтерфейс Book. Додайте модифікатор readonly. Видаліть
 // тимчасово id у книжки та побачите, що з'явиться помилка.
@@ -295,10 +156,6 @@ interface Book {
 
 // 4. Створіть функцію printBook(), яка на вхід приймає книгу та виводить у консоль фразу book.title + by
 // + book.author. Використайте інтерфейс Book для типу параметра.
-
-function printBook(book: Book): void {
-    console.log(`${book.title} by ${book.author}`);
-}
 
 // 5. Оголосіть змінну myBook і надайте їй наступний об'єкт
 // {
@@ -354,10 +211,6 @@ let myBook: Book = {
 
 // ?? ...який описуватиме тип функції... ??
 
-interface DamageLogger {
-    (reason: string): void;
-}
-
 // 2. Внесіть зміни до інтерфейсу Book: використовуйте оголошений інтерфейс DamageLogger для поля
 // markDamaged.
 
@@ -367,7 +220,8 @@ interface DamageLogger {
 // Створіть функцію, яка задовольняє цьому інтерфейсу, і надайте її оголошеній змінній. Викличте
 // функцію.
 
-const logDamage: DamageLogger = (reason: string) => console.log(`Damaged: ${reason}`);
+// onst logDamage: DamageLogger = (reason: string) => console.log(`Damaged: ${reason}`);
+const logDamage: Logger = (reason: string) => console.log(`Damaged: ${reason}`);
 
 // logDamage('missing back cover');
 
@@ -375,29 +229,14 @@ const logDamage: DamageLogger = (reason: string) => console.log(`Damaged: ${reas
 
 // 1. Оголосіть інтерфейс Person, який містить дві рядкові властивості – name і email.
 
-interface Person {
-    name: string;
-    email: string;
-}
-
 // 2. Оголосіть інтерфейс Author на основі інтерфейсу Person, який розширює вказаний інтерфейс
 // числовою властивістю numBooksPublished.
-
-interface Author extends Person {
-    numBooksPublished: number;
-}
 
 // 3. Оголосіть інтерфейс Librarian на основі інтерфейсу Person, який розширює цей інтерфейс двома
 // властивостями:
 // a. Рядкова властивість department
 // b. Функція assistCustomer, яка приймає два рядкові параметри custName і bookTitle і
 // нічого не повертає.
-
-interface Librarian extends Person {
-    department: string;
-    // assistCustomer(custName: string, bookTitle: string): void; // v1
-    assistCustomer: (custName: string, bookTitle: string) => void; // v2
-}
 
 // 4. Оголосіть змінну favoriteAuthor, використовуючи інтерфейс Author, задайте значення у вигляді
 // літерала об'єкта.
@@ -451,7 +290,6 @@ const offer: any = {
 // 1. Оголосіть тип BookProperties, який включає властивості інтерфейсу Book, використовуючи keyof
 // оператор.
 
-type BookProperties = keyof Book;
 // type BookProperties = keyof Book | 'isbn';
 
 // 2. Реалізуйте функцію getProperty(), яка приймає два параметри:
@@ -460,10 +298,6 @@ type BookProperties = keyof Book;
 // і повертає значення цієї властивості з переданого об'єкта, якщо це не функція, для функції
 // повертає її ім'я. Використовуйте тип any для значення, що повертається.
 
-function getProperty(book: Book, prop: BookProperties): any {
-    const value = book[prop];
-    return typeof value === 'function' ? value.name : value;
-}
 
 // 3. Викличте цю функцію тричі зі значенням другого параметра: title, markDamaged, isbn
 
@@ -487,19 +321,6 @@ function getProperty(book: Book, prop: BookProperties): any {
 // d. Метод printItem() без параметрів, що нічого не повертає. Цей метод повинен
 // виводити рядок "title was published in year" в консоль.
 
-// class ReferenceItem {
-//     title: string;
-//     year: number;
-//     constructor(newTitle: string, newYear: number) {
-//         console.log('Creating a new ReferenceItem...');
-//         this.title = newTitle;
-//         this.year = newYear;
-//     };
-//     printItem(): void {
-//         console.log(`${this.title} was published in ${this.year}`);
-//     };
-// }
-
 // 2. Оголосіть змінну ref та проініціалізуйте її об'єктом ReferenceItem. Передайте значення для
 // параметрів конструктора. Викличте метод printItem().
 
@@ -509,30 +330,6 @@ function getProperty(book: Book, prop: BookProperties): any {
 
 // 3. Закоментуйте конструктор, властивості title та year та реалізуйте створення властивостей через
 // параметри конструктора (title - public, year - private).
-
-// class ReferenceItem {
-
-//     private _publisher: string;
-
-//     get publisher(): string {
-//         return this._publisher.toUpperCase();
-//     };
-
-//     set publisher(newPublisher: string) {
-//         this._publisher = newPublisher;
-//     }
-
-//     constructor(
-//         // public title: string,
-//         public readonly title: string,
-//         private year: number
-//     ) {
-//         console.log('Creating a new ReferenceItem...');
-//     }
-//     printItem(): void {
-//         console.log(`${this.title} was published in ${this.year}`);
-//     };
-// }
 
 // const ref = new ReferenceItem('Java Script', 2022);
 // console.log(ref);
@@ -548,45 +345,6 @@ function getProperty(book: Book, prop: BookProperties): any {
 
 // ref.publisher = 'some text'; // getter
 // console.log(ref.publisher); // setter
-
-abstract class ReferenceItem {
-
-    #id: number;
-
-    private _publisher: string;
-
-    get publisher(): string {
-        return this._publisher.toUpperCase();
-    };
-
-    set publisher(newPublisher: string) {
-        this._publisher = newPublisher;
-    }
-
-    static department: string = 'Default department';
-
-    constructor(
-        id: number,
-        public title: string,
-        // private year: number // 5.2
-        protected year: number // 5.2
-    ) {
-        this.#id = id;
-        console.log('Creating a new ReferenceItem...');
-    }
-    printItem(): void {
-        console.log(`${this.title} was published in ${this.year}`);
-        console.log(ReferenceItem.department);
-        console.log(Object.getPrototypeOf(this)); // приклад способу як дістатисть до прототипу
-        console.log(Object.getPrototypeOf(this).constructor.department); // приклад способу як дістатисть до прототипу
-    }
-
-    getID(): number {
-        return this.#id;
-    };
-
-    abstract printCitation(): void;
-}
 
 // const ref = new ReferenceItem(1, 'Java Script', 2022);
 // console.log(ref);
@@ -606,36 +364,14 @@ abstract class ReferenceItem {
 // +
 // ref.printItem();
 
-console.log('------------------------------------------------------');
-
 // Task 05.02. Extending Classes
 // 1. Створіть клас Encyclopedia як спадкоємця класу ReferenceItem. Додайте одну додаткову числову
 // публічну властивість edition. Використайте параметри конструктора.
 
-class Encyclopedia extends ReferenceItem {
-    // edition: number;
-    constructor(
-        newNumber: number,
-        newTitle: string,
-        newYear: number,
-        public edition: number
-    ) {
-        super(newNumber, newTitle, newYear);
-    }
-
-    override printItem() {
-        super.printItem();
-        console.log(`Edition: ${this.edition} (${this.year})`);
-    }
-
-    printCitation() {
-        console.log(`${this.title} ${this.year}`);
-    }
-}
-
 // 2. Оголосіть змінну refBook та створіть об'єкт Encyclopedia. Викличте метод printItem();
 
-// const refBook = new Encyclopedia(1, 'Enc.', 2022, 123);
+// const refBook: Encyclopedia = new Encyclopedia(1, 'Enc.', 2022, 123);
+// const refBook: RefBook = new RefBook(1, 'Enc.', 2022, 123);
 // refBook.printItem();
 
 // 3. Перевизначте метод printItem(). Додайте ключове слово override. Нехай він робить те, що робив
@@ -644,8 +380,6 @@ class Encyclopedia extends ReferenceItem {
 // ReferenceItem з private на protected.
 
 // +
-
-// console.log('------------------------------------------------------');
 
 // Task 05.03. Creating Abstract Classes
 // 1. Внесіть зміни до класу ReferenceItem – зробіть його абстрактним.
@@ -677,29 +411,17 @@ class Encyclopedia extends ReferenceItem {
 // властивості. Метод assistCustomer повинен виводити в консоль рядок `${this.name} is assisting
 // ${custName} with book ${bookTitle}`.
 
-class UniversityLibrarian implements Librarian {
-    name: string;
-    email: string;
-    department: string;
-    assistCustomer(custName: string, bookTitle: string): void {
-        console.log(`${this.name} is assisting ${custName} with book ${bookTitle}`);
-    }
-}
-
 // 2. Оголосіть змінну favoriteLibrarian за допомогою інтерфейсу Librarian і проініціалізуйте її за
 // допомогою об'єкта, створеного класом UniversityLibrarian(). Жодних помилок при цьому не
 // повинно виникати. Проініціалізуйте властивість name та викличте метод assistCustomer().
 
-const favoriteLibrarian: Librarian = new UniversityLibrarian();
-favoriteLibrarian.name = 'Anna';
-favoriteLibrarian.assistCustomer('Boris', 'Learn TS');
+// const favoriteLibrarian1: Librarian = new UL.UniversityLibrarian();
 
-// console.log('------------------------------------------------------');
+// favoriteLibrarian.name = 'Anna';
+// favoriteLibrarian.assistCustomer('Boris', 'Learn TS');
 
 // Task 05.05. Intersection and Union Types
 // 1. Створіть тип PersonBook. Використовуйте для цього інтерфейси Person, Book та перетин типів.
-
-type PersonBook = Person & Book; // перетин
 
 // 2. Оголосіть змінну з типом PersonBook, проініціалізуйте її літералом, виведіть її в консоль.
 
@@ -713,12 +435,10 @@ const personBook: PersonBook = {
     title: 'Test title'
 };
 
-console.log(personBook);
+// console.log(personBook);
 
 // 3. Створіть тип BookOrUndefined. Використовуйте для цього об'єднання інтерфейсу Book та
 // undefined.
-
-type BookOrUndefined = Book | undefined; // об'єднання
 
 // 4. Замініть тип значення, що повертається у функції getBookByID() на BookOrUndefined.
 
@@ -729,16 +449,156 @@ type BookOrUndefined = Book | undefined; // об'єднання
 // встановлювати значення властивостей за замовчуванням та деякі значення, якщо вони не задані,
 // використовуючи логічний оператор налового присвоєння та повертати об'єкт.
 
-interface TOptions {
-    duration?: number;
-    speed?: number;
-}
-
-function setDefaultConfig(options: TOptions) {
-    options.duration ??= 100;
-    options.speed ??= 60;
-    return options;
-}
-
 console.log('------------------------------------------------------');
 
+// 06. Modules and Namespaces
+
+// Task 06.01. Using Namespaces
+// 1. Створіть папку для нового проекту NamespaceDemo
+// 2. Створіть файл utility-functions.ts
+// 3. Створіть простір імен Utility
+// 4. Створіть та експортуйте вкладений простір імен Fees
+// 5. Створіть та експортуйте функцію calculateLateFee() у вкладеному просторі імен, яка приймає
+// числовий параметр daysLate та повертає fee, обчислене як daysLate * 0.25;
+// 6. Створіть та експортуйте функцію maxBooksAllowed() у просторі імен Utility, яка приймає один
+// числовий параметр age. Якщо age < 12, то повертає 3 або 10.
+// 7. Створіть функцію privateFunc(), яка виводить у консоль повідомлення «This is a private function»
+// 8. Створіть файл app.ts. Додайте посилання на файл utility-functions.ts
+// 9. Напишіть фрагмент коду, який використовує функції із простору імен.
+// 10. Використайте ключове слово import та оголосіть аліас util для вкладеного простору імен.
+// import util = Utility.Fees;
+// 11. Запустіть компілятор та скомпілюйте лише tsc app.ts --target ES5. Створіть index.html
+// Скористайтеся наступним фрагментом HTML:
+// <html>
+//  <head></head>
+//  <body>
+//  <script src="utility-functions.js"></script>
+//  <script src="app.js"></script>
+//  </body>
+// </html>
+// 12. Запустіть компілятор ще раз і вкажіть опцію --outFile bundle.js
+// 13. Підключіть отриманий файл до index.html
+// +
+
+// Task 06.02. Export and Import
+// 1. Створіть файл enums.ts, перенесіть до нього enum Category. Додайте експорт в кінці файлу.
+// 2. Створіть файл interfaces.ts та
+// a. перенесіть до нього інтерфейси: Book, DamageLogger, Person, Author, Librarian
+// b. додайте імпорт Category
+// c. додайте експорт інтерфейсів Book, DamageLogger, Person, Author, Librarian, TOptions в
+// кінці файлу. Експортуйте DamageLogger під назвою Logger
+// 3. Створіть новий файл classes.ts та перенесіть до нього класи: UniversityLibrarian, ReferenceItem.
+// a. Додайте імпорт інтерфейсів як цілого модуля з ім'ям Interfaces
+// b. Змініть опис класу UniversityLibrarian, щоб він реалізовував інтерфейс
+// Interfaces.Librarian
+// c. Додайте експорт в кінці файлу та експортуйте обидва класи.
+// 4. Створіть файл types.ts і перенесіть у нього типи: BookProperties, PersonBook, BookOrUndefined.
+// a. Додайте імпорт інтерфейсів Book та Person
+// b. Експортуйте типи із модуля.
+// 5. Створіть файл functions.ts та перенесіть усі функції.
+// a. Додайте імпорт інтерфейсу Book, enum Category, типів BookProperties,
+// BookOrUndefined
+// b. Додайте експорт всіх функцій (не обов'язково)
+// 6. Внесіть зміни до файлу app.ts
+// a. Додайте імпорт категорій, інтерфейсів Book, Logger, Author, Librarian, класів
+// UniversityLibrarian, ReferenceItem, типу PersonBook та всіх функцій.
+// b. Змініть тип змінної logDamage на Logger (Task 04.02)
+// +
+
+// Task 06.03. Default Export
+// 1. Створіть файл encyclopedia.ts та перемістіть до нього клас Encyclopedia. Додайте імпорт
+// ReferenceItem. Додайте експорт за замовчуванням.
+// 2. Імпортуйте цей клас у app.ts як RefBook
+// 3. Внесіть зміни до коду завдання Task 05.02.
+// 4. / Автор: Yevhen_Zakharevych@epam.com /. Створіть функцію-ствердження умови
+// assertRefBookInstance в модулі functions.ts Функція повинна приймати condition: any та повертати
+// тип asserts condition. Якщо умова не виконується, функція повинна генерувати виняток «It is not
+// an instance of RefBook» .
+// 5. Створіть та експортуйте функцію printRefBook(data: any): void, яка використовує функцію
+// assertRefBookInstance та викликає метод printItem() у екземпляра RefBook. Умову перевірки
+// задайте за допомогою оператора instanceof
+// 6. Імпортуйте функцію printRefBook в app.ts та викличте для екземпляра класу RefBook.
+
+const refBook: RefBook = new RefBook(1, 'Enc.', 2022, 123);
+// printRefBook(refBook);
+
+// 7. Створіть екземпляр класу UniversityLibrarian та знову викличте для нього функцію printRefBook
+
+const favoriteLibrarian: Librarian = new UL.UniversityLibrarian();
+// printRefBook(favoriteLibrarian);
+
+// Task 06.04. Re-Export
+// 1. Створіть папку classes і перемістіть файл encyclopedia.ts до неї.
+// 2. Рознесіть класи UniversityLibrarian і ReferenceItem по різних файлах і перемістіть в папку classes.
+// 3. Видаліть файл classes.ts
+// 4. Створіть файл classes/index.ts і додайте до нього реекспорт класів Encyclopedia, ReferenceItem,
+// використовуючи конструкцію export *, export { default as …} відповідно, а також додайте
+// реекспорт класу UniversityLibrarian, використовуючи конструкцію export * as UL.
+// 5. Виправте імпорти у файлі app.ts
+// 6. Виправте створення екземпляра класу UniversityLibrarian у завданні Task 05.04. та Task 06.03
+// +
+
+// Task 06.05. Dynamic Import Expression
+// 1. Створіть у папці classes файл reader.ts та реалізуйте клас Reader, який містить такі властивості:
+// a. name: string;
+// b. books: Book[] = [];
+// c. take(book: Book): void - метод додає книжку до масиву книжок.
+// 2. Внесіть зміни до файлу classes/index.ts, додайте новий модуль.
+// 3. Реалізуйте вираз динамічного імпорту за допомогою виразу top level await/Promise для
+// завантаження всього з шляху './classes' як модуля. Завантаження реалізувати за умови, якщо
+// деяка змінна набуває значення true.
+
+// // const flag = true;
+// const flag = false;
+
+// if (flag) {
+//    import('./classes')
+//        .then(o => {
+//            const reader = new o.Reader();
+//            reader.name = 'Anna';
+//            reader.take(getAllBooks()[0]);
+//            console.log(reader);
+//        })
+//        .catch(err => console.log(err))
+//        .finally(() => console.log('Complete!'));
+// }
+
+// const flag = true;
+
+// if (flag) {
+//    const o = await import('./classes');
+//    const reader = new o.Reader();
+//    reader.name = 'Anna';
+//    reader.take(getAllBooks()[0]);
+//    console.log(reader);
+// }
+
+// 4. Додайте до webpack.config.js об'єкт
+// experiments: {
+//  topLevelAwait: true
+//  }
+// +
+
+// 5. Створіть екземпляр класу Reader. Виведіть його в консоль.
+// +
+
+// Task 06.06. Type-Only Imports and Exports
+// 1. Створіть у папці classes файл library.ts та реалізуйте клас Library, який містить такі властивості:
+// a. Id: number
+// b. name: string
+// c. address: string
+// 2. Внесіть зміни до файлу classes/index.ts. Експортуйте тип Library. Використовуйте конструкцію
+// export type {…}
+// 3. Імпортуйте Library в app.ts. Оголосіть змінну за допомогою Library.
+
+let library: Library = {
+    id: 1,
+    address: '',
+    name: 'Anna'
+};
+// let library: Library = new Library();
+
+// 4. Створіть екземпляр класу Library. Ви повинні отримати помилку. Закоментуйте рядок.
+// +
+// 5. Оголосіть змінну, вкажіть тип Library. Проініціалізуйте літералом, виведіть у консоль.
+console.log(library);
