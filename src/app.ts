@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-redeclare */
 
 // TypeScript In-Depth
@@ -141,7 +142,8 @@ function createCustomer(name: string, age?: number, city?: string): void {
 // Створіть функцію getBookByID(), яка приймає id книжки та повертає книжку. Використовуйте функцію getAllBooks(),
 // метод масиву find() та стрілочну функцію. Викличте функцію та передайте їй 1.
 
-function getBookByID(id: Book['id']): Book | undefined {
+// function getBookByID(id: Book['id']): Book | undefined {
+function getBookByID(id: Book['id']): BookOrUndefined {
     const books = getAllBooks();
     return books.find(book => book.id === id);
 }
@@ -343,7 +345,7 @@ let myBook: Book = {
 // Метод повинен виводити рядок `Damaged: ${reason}`. Викличте цей метод та передайте рядок
 // 'missing back cover'.
 
-myBook.markDamaged('missing back cover');
+// myBook.markDamaged('missing back cover');
 
 // Task 04.02. Defining an Interface for Function Types
 
@@ -367,7 +369,7 @@ interface DamageLogger {
 
 const logDamage: DamageLogger = (reason: string) => console.log(`Damaged: ${reason}`);
 
-logDamage('missing back cover');
+// logDamage('missing back cover');
 
 // Task 04.03. Extending Interface
 
@@ -409,12 +411,12 @@ const favoriteAuthor: Author = {
 // 5. Оголосіть змінну favoriteLibrarian, використовуючи інтерфейс Librarian, задайте значення у вигляді
 // літерала об'єкта
 
-const favoriteLibrarian: Librarian = {
-    name: 'Vika',
-    email: 'www@post.ua',
-    department: 'dep',
-    assistCustomer: null, // ?
-};
+// const favoriteLibrarian: Librarian = {
+//     name: 'Vika',
+//     email: 'www@post.ua',
+//     department: 'dep',
+//     assistCustomer: null, // ?
+// };
 
 // favoriteLibrarian.department = 'Department';
 
@@ -439,11 +441,11 @@ const offer: any = {
 // c. offer.book.getTitle()
 // d. offer.book.authors[0]
 
-console.log(offer.magazine);
-console.log(offer.magazine?.getTitle());
-console.log(offer.book.getTitle?.()); // is not a function (...undefined)
-console.log(offer.book.authors?.[0]);
-console.log(offer.book.authors?.[10]?.val);
+// console.log(offer.magazine);
+// console.log(offer.magazine?.getTitle());
+// console.log(offer.book.getTitle?.()); // is not a function (...undefined)
+// console.log(offer.book.authors?.[0]);
+// console.log(offer.book.authors?.[10]?.val);
 
 // Task 04.05. Keyof Operator
 // 1. Оголосіть тип BookProperties, який включає властивості інтерфейсу Book, використовуючи keyof
@@ -465,9 +467,278 @@ function getProperty(book: Book, prop: BookProperties): any {
 
 // 3. Викличте цю функцію тричі зі значенням другого параметра: title, markDamaged, isbn
 
-console.log(getProperty(myBook, 'title'));
-console.log(getProperty(myBook, 'markDamaged'));
+// console.log(getProperty(myBook, 'title'));
+// console.log(getProperty(myBook, 'markDamaged'));
 // console.log(getProperty(myBook, 'isbn')); // error
+
+// console.log('------------------------------------------------------');
+
+// ================================================================
+// 05. Classes
+// ================================================================
+
+// Task 05.01. Creating and Using Classes
+// 1. Створіть клас ReferenceItem, який містить:
+// a. Рядкову властивість title
+// b. Числову властивість year
+// c. Конструктор з двома параметрами: рядковий параметр newTitle, числовий параметр
+// newYear, який у консоль виводить рядок 'Creating a new ReferenceItem...' та ініціалізує
+// властивості.
+// d. Метод printItem() без параметрів, що нічого не повертає. Цей метод повинен
+// виводити рядок "title was published in year" в консоль.
+
+// class ReferenceItem {
+//     title: string;
+//     year: number;
+//     constructor(newTitle: string, newYear: number) {
+//         console.log('Creating a new ReferenceItem...');
+//         this.title = newTitle;
+//         this.year = newYear;
+//     };
+//     printItem(): void {
+//         console.log(`${this.title} was published in ${this.year}`);
+//     };
+// }
+
+// 2. Оголосіть змінну ref та проініціалізуйте її об'єктом ReferenceItem. Передайте значення для
+// параметрів конструктора. Викличте метод printItem().
+
+// const ref = new ReferenceItem('Test', 2022);
+// console.log(ref);
+// ref.printItem();
+
+// 3. Закоментуйте конструктор, властивості title та year та реалізуйте створення властивостей через
+// параметри конструктора (title - public, year - private).
+
+// class ReferenceItem {
+
+//     private _publisher: string;
+
+//     get publisher(): string {
+//         return this._publisher.toUpperCase();
+//     };
+
+//     set publisher(newPublisher: string) {
+//         this._publisher = newPublisher;
+//     }
+
+//     constructor(
+//         // public title: string,
+//         public readonly title: string,
+//         private year: number
+//     ) {
+//         console.log('Creating a new ReferenceItem...');
+//     }
+//     printItem(): void {
+//         console.log(`${this.title} was published in ${this.year}`);
+//     };
+// }
+
+// const ref = new ReferenceItem('Java Script', 2022);
+// console.log(ref);
+// ref.printItem();
+
+// 4. Створіть приватну (“soft private”) рядкову властивість _publisher.
+// a. Додайте гетер publisher, який перетворює властивість _publisher у верхній регістр і
+// повертає його.
+// b. Додайте сеттер publisher, який приймає рядковий параметр newPublisher і встановлює
+// значення властивості _publisher в значення цього параметра.
+// c. Проініціалізуйте властивість ref.publisher будь-яким рядковим значенням і виведіть
+// його в консоль. Результат має бути у верхньому регістрі.
+
+// ref.publisher = 'some text'; // getter
+// console.log(ref.publisher); // setter
+
+abstract class ReferenceItem {
+
+    #id: number;
+
+    private _publisher: string;
+
+    get publisher(): string {
+        return this._publisher.toUpperCase();
+    };
+
+    set publisher(newPublisher: string) {
+        this._publisher = newPublisher;
+    }
+
+    static department: string = 'Default department';
+
+    constructor(
+        id: number,
+        public title: string,
+        // private year: number // 5.2
+        protected year: number // 5.2
+    ) {
+        this.#id = id;
+        console.log('Creating a new ReferenceItem...');
+    }
+    printItem(): void {
+        console.log(`${this.title} was published in ${this.year}`);
+        console.log(ReferenceItem.department);
+        console.log(Object.getPrototypeOf(this)); // приклад способу як дістатисть до прототипу
+        console.log(Object.getPrototypeOf(this).constructor.department); // приклад способу як дістатисть до прототипу
+    }
+
+    getID(): number {
+        return this.#id;
+    };
+
+    abstract printCitation(): void;
+}
+
+// const ref = new ReferenceItem(1, 'Java Script', 2022);
+// console.log(ref);
+
+// 5. Створіть приватну (“hard private”) числову властивість id.
+// a. Внесіть зміни до конструктора для ініціалізації цієї властивості.
+// b. Додайте метод getID(), який повинен повертати значення властивості id.
+// c. Виведіть об'єкт у консоль.
+// d. Викличте метод getID().
+
+// console.log(ref.getID());
+
+// 6. Створіть статичну рядкову властивість department і проініціалізуйте її будь-яким значенням за
+// замовчуванням. Внесіть зміни до методу printItem() – виводьте значення цієї статичної властивості
+// у консоль.
+
+// +
+// ref.printItem();
+
+console.log('------------------------------------------------------');
+
+// Task 05.02. Extending Classes
+// 1. Створіть клас Encyclopedia як спадкоємця класу ReferenceItem. Додайте одну додаткову числову
+// публічну властивість edition. Використайте параметри конструктора.
+
+class Encyclopedia extends ReferenceItem {
+    // edition: number;
+    constructor(
+        newNumber: number,
+        newTitle: string,
+        newYear: number,
+        public edition: number
+    ) {
+        super(newNumber, newTitle, newYear);
+    }
+
+    override printItem() {
+        super.printItem();
+        console.log(`Edition: ${this.edition} (${this.year})`);
+    }
+
+    printCitation() {
+        console.log(`${this.title} ${this.year}`);
+    }
+}
+
+// 2. Оголосіть змінну refBook та створіть об'єкт Encyclopedia. Викличте метод printItem();
+
+// const refBook = new Encyclopedia(1, 'Enc.', 2022, 123);
+// refBook.printItem();
+
+// 3. Перевизначте метод printItem(). Додайте ключове слово override. Нехай він робить те, що робив
+// та додатково виводить рядок у консоль «Edition: edition (year)». Ви отримаєте помилку, що
+// властивість year недоступна. Щоб властивість стала доступна, змініть модифікатор доступу в класі
+// ReferenceItem з private на protected.
+
+// +
+
+// console.log('------------------------------------------------------');
+
+// Task 05.03. Creating Abstract Classes
+// 1. Внесіть зміни до класу ReferenceItem – зробіть його абстрактним.
+
+// +
+// const refBook = new Encyclopedia(1, 'Enc.', 2022, 123);
+// refBook.printCitation();
+
+// 2. Додайте абстрактний метод printCitation(), який не приймає параметрів і не повертає значення.
+// Цей метод має бути без реалізації. Після цього Ви отримаєте помилку в класі Encyclopedia, яка
+// повідомлятиме, що не реалізовано абстрактний метод.
+
+// printCitation()
+
+// 3. Додайте реалізацію методу printCitation до класу Encyclopedia. Метод повинен виводити в
+// консоль рядок "title - year".
+
+// +
+
+// 4. Оголосіть змінну refBook та проініціалізуйте її об'єктом Encyclopedia. Викличте метод
+// printCitation();
+
+// const refBook = new Encyclopedia('Enc.', 123);
+// refBook.printItem();
+
+// Task 05.04. Interfaces for Class Types
+
+// 1. Створіть клас UniversityLibrarian, який реалізує інтерфейс Librarian та реалізуйте всі необхідні
+// властивості. Метод assistCustomer повинен виводити в консоль рядок `${this.name} is assisting
+// ${custName} with book ${bookTitle}`.
+
+class UniversityLibrarian implements Librarian {
+    name: string;
+    email: string;
+    department: string;
+    assistCustomer(custName: string, bookTitle: string): void {
+        console.log(`${this.name} is assisting ${custName} with book ${bookTitle}`);
+    }
+}
+
+// 2. Оголосіть змінну favoriteLibrarian за допомогою інтерфейсу Librarian і проініціалізуйте її за
+// допомогою об'єкта, створеного класом UniversityLibrarian(). Жодних помилок при цьому не
+// повинно виникати. Проініціалізуйте властивість name та викличте метод assistCustomer().
+
+const favoriteLibrarian: Librarian = new UniversityLibrarian();
+favoriteLibrarian.name = 'Anna';
+favoriteLibrarian.assistCustomer('Boris', 'Learn TS');
+
+// console.log('------------------------------------------------------');
+
+// Task 05.05. Intersection and Union Types
+// 1. Створіть тип PersonBook. Використовуйте для цього інтерфейси Person, Book та перетин типів.
+
+type PersonBook = Person & Book; // перетин
+
+// 2. Оголосіть змінну з типом PersonBook, проініціалізуйте її літералом, виведіть її в консоль.
+
+const personBook: PersonBook = {
+    name: 'Anna',
+    author: 'Anna',
+    available: false,
+    category: Category.Angular,
+    email: 'stas@gmail.com',
+    id: 13,
+    title: 'Test title'
+};
+
+console.log(personBook);
+
+// 3. Створіть тип BookOrUndefined. Використовуйте для цього об'єднання інтерфейсу Book та
+// undefined.
+
+type BookOrUndefined = Book | undefined; // об'єднання
+
+// 4. Замініть тип значення, що повертається у функції getBookByID() на BookOrUndefined.
+
+// + BookOrUndefined
+
+// 5. Створіть функцію setDefaultConfig(), яка приймає об'єкт options. Тип для об'єкта TOptions опишіть
+// інтерфейсом з необов'язковими числовими властивостями duration і speed. Функція повинна
+// встановлювати значення властивостей за замовчуванням та деякі значення, якщо вони не задані,
+// використовуючи логічний оператор налового присвоєння та повертати об'єкт.
+
+interface TOptions {
+    duration?: number;
+    speed?: number;
+}
+
+function setDefaultConfig(options: TOptions) {
+    options.duration ??= 100;
+    options.speed ??= 60;
+    return options;
+}
 
 console.log('------------------------------------------------------');
 
