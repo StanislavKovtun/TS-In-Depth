@@ -144,19 +144,12 @@ export function printRefBook(data: any): void {
     data.printItem();
 }
 
-// Task 06.03. Default Export
-// 1. Створіть файл encyclopedia.ts та перемістіть до нього клас Encyclopedia. Додайте імпорт
-// ReferenceItem. Додайте експорт за замовчуванням.
-// 2. Імпортуйте цей клас у app.ts як RefBook
-// 3. Внесіть зміни до коду завдання Task 05.02.
-// 4. / Автор: Yevhen_Zakharevych@epam.com /. Створіть функцію-ствердження умови
-// assertRefBookInstance в модулі functions.ts Функція повинна приймати condition: any та повертати
-// тип asserts condition. Якщо умова не виконується, функція повинна генерувати виняток «It is not
-// an instance of RefBook» .
-// 5. Створіть та експортуйте функцію printRefBook(data: any): void, яка використовує функцію
-// assertRefBookInstance та викликає метод printItem() у екземпляра RefBook. Умову перевірки
-// задайте за допомогою оператора instanceof
-// 6. Імпортуйте функцію printRefBook в app.ts та викличте для екземпляра класу RefBook.
-// 7. Створіть екземпляр класу UniversityLibrarian та знову викличте для нього функцію printRefBook
+export function purge<T>(inventory: Array<T>): T[] {
+    return inventory.slice(2);
+}
 
+export function getObjectProperty<TObject, TKey extends keyof TObject>(object: TObject, prop: TKey): TObject[TKey] | string {
+    const value = object[prop];
+    return typeof value === 'function' ? value.name : value;
+}
 

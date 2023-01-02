@@ -1,11 +1,14 @@
 // TypeScript In-Depth
 
-import { ReferenceItem, UL, RefBook, Library } from './classes';
+import { ReferenceItem, UL, RefBook, Library, Shelf } from './classes';
 import { Category } from './enums';
-import { Author, Book, Librarian, Logger } from './interfaces';
-import { PersonBook } from './types';
+import { Author, Book, Librarian, Logger, Magazine } from './interfaces';
+import { BookRequiredFields, PersonBook, UpdatedBook, СreateCustomerFunctionType } from './types';
 // import RefBook from './classes/encyclopedia';
-import { printRefBook, calcTotalPages, getAllBooks, getBooksAuthorByIndex, getBookTitlesByCategory } from './functions';
+import {
+    printRefBook, calcTotalPages, getAllBooks,
+    getBooksAuthorByIndex, getBookTitlesByCategory, purge, getObjectProperty, createCustomer
+} from './functions';
 
 showHello('greeting', 'TypeScript');
 
@@ -449,7 +452,7 @@ const personBook: PersonBook = {
 // встановлювати значення властивостей за замовчуванням та деякі значення, якщо вони не задані,
 // використовуючи логічний оператор налового присвоєння та повертати об'єкт.
 
-console.log('------------------------------------------------------');
+// console.log('------------------------------------------------------');
 
 // 06. Modules and Namespaces
 
@@ -591,14 +594,200 @@ const favoriteLibrarian: Librarian = new UL.UniversityLibrarian();
 // export type {…}
 // 3. Імпортуйте Library в app.ts. Оголосіть змінну за допомогою Library.
 
-let library: Library = {
-    id: 1,
-    address: '',
-    name: 'Anna'
-};
+// let library: Library = {
+//    id: 1,
+//    address: '',
+//    name: 'Anna'
+// };
+
 // let library: Library = new Library();
 
 // 4. Створіть екземпляр класу Library. Ви повинні отримати помилку. Закоментуйте рядок.
 // +
 // 5. Оголосіть змінну, вкажіть тип Library. Проініціалізуйте літералом, виведіть у консоль.
-console.log(library);
+// console.log(library);
+
+// 07. Generics
+// Task 07.01. Generic Functions
+// 1. Створіть у файлі functions.ts дженерик (загальну) функцію purge(), яка приймає один параметр –
+// дженерик масив inventory та повертає дженерик масив того ж типу, що містить елементи
+// початкового масиву без двох перших елементів. Експортуйте цю функцію.
+// 2. Імпортуйте цю функцію у програму.
+// 3. Додайте категорію Software у файл enums.ts.
+// 4. Оголосіть змінну inventory, що містить наступний масив книг
+// [
+// { id: 10, title: 'The C Programming Language';
+// { id: 11, title: 'Code Complete', author: 'Steve McConnell', можливий: true, category:
+// Category.Software },
+// { id: 12, title: '8-Bit Graphics with Cobol', author: 'A. B.', available: true,
+// категорії: Category.Software },
+// { id: 13, title: 'Cool autoexec.bat Scripts!', author: 'C. D.', available: true,
+// категорії: Category.Software }
+// ];
+const inventory = [
+    {
+        id: 10, title: 'The C Programming Language', author: 'Steve McConnell', available: true, category:
+            Category.Software
+    },
+    {
+        id: 11, title: 'Code Complete', author: 'Steve McConnell', available: true, category:
+            Category.Software
+    },
+    {
+        id: 12, title: '8-Bit Graphics with Cobol', author: 'A. B.', available: true,
+        category: Category.Software
+    },
+    {
+        id: 13, title: 'Cool autoexec.bat Scripts!', author: 'C. D.', available: true,
+        category: Category.Software
+    }
+];
+
+// 5. Викличте функцію purge() та передайте їй ці дані. Виведіть результат у консоль.
+
+// const result1 = purge<Book>(inventory);
+// console.log(result1);
+// const result2 = purge(inventory);
+// console.log(result2);
+
+// 6. Викличте цю функцію, але з числовим масивом і знову виведіть результат у консоль.
+
+const result3 = purge<number>([1, 2, 3]);
+// console.log(result3);
+
+// Task 07.02. Generic Interfaces and Classes
+// 1. Створіть інтерфейс Magazine, який містить дві рядкові властивості, title, publisher та додайте його
+// у файл interfaces.ts. Експортуйте цей інтерфейс.
+// +
+// 2. Створіть файл classes/shelf.ts і, використовуючи експорт за замовчуванням, реалізуйте дженерик
+// клас Shelf:
+// a. додайте приватну властивість items, яка є масивом елементів типу Т.
+// b. додайте метод add(), який приймає один параметр item типу T і додає його в масив.
+// Нічого не повертає.
+// c. додайте метод getFirst(), який нічого не приймає, і повертає перший елемент із items.
+// +
+// 3. Додайте реекспорт у файл classes/index.ts
+// 4. Імпортуйте цей клас і інтерфейс Magazine в app.ts.
+// 5. Закоментуйте код, який відноситься до функції purge(), крім змінної inventory
+// 6. Створіть полку bookShelf і збережіть усі книжки з inventory на полку. Отримайте першу книжку і
+// виведіть її назву в консоль.
+
+// const bookShelf: Shelf<Book> = new Shelf<Book>();
+const bookShelf = new Shelf<Book>();
+inventory.forEach(book => bookShelf.add(book));
+// console.log(bookShelf.getFirst().title);
+
+// 7. Об'явіть змінну magazines, яка містить наступні дані:
+// [
+// { title: 'Programming Language Monthly', видавець: 'Code Mags' },
+// { title: 'Literary Fiction Quarterly', видавець: 'College Press' },
+// { title: 'Five Points', видавець: 'GSU' }
+// ];
+
+const magazines: Magazine[] = [
+    { title: 'Programming Language Monthly', publisher: 'Code Mags' },
+    { title: 'Literary Fiction Quarterly', publisher: 'College Press' },
+    { title: 'Five Points', publisher: 'GSU' }
+];
+
+// 8. Створіть полку magazineShelf і помістіть усі ці журнали на полку. Отримайте перший журнал і
+// виведіть його в консоль.
+
+const magazineShelf = new Shelf<Magazine>();
+magazines.forEach(magazine => magazineShelf.add(magazine));
+// console.log(magazineShelf.getFirst().title);
+
+
+// Task 07.03. Generic Constraints
+// 1. Внесіть зміни в клас Shelf:
+// a. додайте метод find(), який приймає рядковий параметр title і повертає перший
+// знайдений елемент на полці типу Т.
+// +
+// b. додайте метод printTitles(), який виводить у консоль назву того, що знаходиться на
+// полці.
+// Після додавання цих методів ви повинні отримати помилку, оскільки властивість title не існує.
+// +
+// 2. У файлі interfaces.ts створіть інтерфейс ShelfItem, який повинен містити всі необхідні властивості,
+// які повинен мати тип T, а саме title.
+// +
+
+// 3. Додайте дженерик обмеження для класу, розширив тип T.
+// +
+
+// 4. Викличте метод printTitles() для журналів.
+// magazineShelf.printTitles();
+
+// 5. Знайдіть журнал 'Five Points' і виведіть його в консоль.
+// console.log(magazineShelf.find('Five Points'));
+
+// 6. Створіть функцію getObjectProperty(). Додайте два параметра типу TObject, TKey. Додайте
+// обмеження на другий параметр, щоб значення були тільки ключами об’єкта типу TObject,
+// використовуючи оператор keyof. Для значення, яке повертається, вкажіть тип TObject[TKey] |
+// string. Тіло функції аналогічне тілу функції getProperty(). Викличте цю функцію.
+
+// console.log(getObjectProperty(magazines[0], 'publisher'));
+// console.log(getObjectProperty(magazines[0], 'title'));
+// console.log(getObjectProperty(inventory[1], 'category'));
+
+// Task 07.04. Utility Types
+// 1. Оголосіть аліас типу BookRequiredFields у файлі types.ts, використовуючи інтерфейс Book та
+// утиліту Required.
+// +
+// 2. Оголосіть змінну типу BookRequiredFields та надайте їй відповідний об'єкт.
+const bookRequiredFields: BookRequiredFields = {
+    author: 'Anna',
+    available: false,
+    category: Category.Angular,
+    id: 1,
+    markDamaged: null,
+    pages: 200,
+    title: 'Learn Angular'
+};
+
+// 3. Оголосіть аліас типу UpdatedBook, використовуючи інтерфейс Book та утиліту Partial
+// +
+// 4. Оголосіть змінну updatedBook і надайте їй відповідний об'єкт.
+const updatedBook: UpdatedBook = {
+    id: 1,
+    pages: 300
+};
+// 5. Оголосіть аліас типу AuthorWoEmail, використовуючи інтерфейс Author та утиліту Omit.
+// +
+// 6. Оголосіть аліас СreateCustomerFunctionType для функціонального типу функції createCustomer.
+// +
+// 7. Оголосіть змінну, використовуючи аліас типу СreateCustomerFunctionType і утиліту Parameters,
+// викличте функцію createCustomer, передавши цю змінну.
+
+let params: Parameters<СreateCustomerFunctionType>;
+params = ['Anna', 30, 'Sumy'];
+// createCustomer(...params); // спред оператор
+
+// Task 07.05. Mapped Types, Utility Types, Conditional Types
+// 1. Оголосіть у файлі types.ts аліас fn для функціонального типу функції, яка приймає три параметри з
+// типами string, number, boolean і повертає тип symbol.
+// +
+// 2. Оголосіть аліаси типів Param1<T>, Param2<T>, Param3<T>, які повертають тип першого, другого та
+// третього параметрів функції відповідно.
+// +
+// 3. Оголосіть аліаси P1, P2, P3 та отримайте типи першого, другого та третього параметрів типу fn.
+// +
+
+// Автор: Olena_Hlukhovska@epam.com
+// 4. Створіть утиліти RequiredProps<T> та OptionalProps<T> у файлі types.ts, які повертають union тип
+// required та optional властивостей об'єкта. Використовуйте mapped type для перебору ключів T та
+// conditional type для трансформації значень ключів типу T. Додайте дженерик обмеження для T
+// розширивши тип object у RequiredProps та OptionalProps.
+// +
+// 5. Оголосіть аліас типу BookRequiredProps та BookOptionalProps, використовуючи інтерфейс Book та
+// утиліти RequiredProps та OptionalProps. Спробуйте замість Book передати примітивний тип.
+// +
+// 6. Створіть утиліту RemoveProps <T extends object, TProps extends keyof T>, яка видаляє властивості
+// TProps з переданого типу T.
+// +
+// 7. Оголосіть аліас типу BookRequiredPropsType та BookOptionalPropsType, використовуючи
+// інтерфейс Book, аліаси типу BookRequiredProps та BookOptioalProps та утиліту RemoveProps
+// Спробуйте замість Book передати Author.
+// +
+
+console.log('------------------------------------------------------');
+
