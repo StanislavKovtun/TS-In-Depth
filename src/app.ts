@@ -527,7 +527,7 @@ const refBook: RefBook = new RefBook(1, 'Enc.', 2022, 123);
 
 // 7. Створіть екземпляр класу UniversityLibrarian та знову викличте для нього функцію printRefBook
 
-const favoriteLibrarian: Librarian = new UL.UniversityLibrarian();
+// const favoriteLibrarian: Librarian = new UL.UniversityLibrarian();
 // printRefBook(favoriteLibrarian);
 
 // Task 06.04. Re-Export
@@ -791,3 +791,138 @@ params = ['Anna', 30, 'Sumy'];
 
 console.log('------------------------------------------------------');
 
+// 08. Decorators
+// Task 08.01. Class Decorators (sealed)
+// 1. Створіть файл decorators.ts. Створіть декоратор класу @sealed(), щоб запобігти додаванню нових
+// властивостей об'єкту класу та прототипу об'єкта. Функція-декоратор повинна приймати один
+// рядковий параметр і нічого не повертати. Перед виконанням функціонала функція має вивести у
+// консоль повідомлення "Sealing the constructor + параметр". Використовуйте метод Object.seal().
+// +
+// 2. Застосуйте цей декоратор до класу UniversityLibrarian.
+// +
+// 3. Створіть екземпляр класу UniversityLibrarian. Перевірте повідомлення у консолі
+
+// const favoriteLibrarian1 = new UL.UniversityLibrarian();
+// const favoriteLibrarian2 = new UL.UniversityLibrarian();
+
+// favoriteLibrarian1['a'] = 1;
+// UL.UniversityLibrarian['a'] = 2;
+// UL.UniversityLibrarian.prototype['a'] = 3;
+
+// Task 08.02. Class Decorators that replace constructor functions (logger)
+// 1. Створіть декоратор класу @logger(), який змінюватиме конструктор класу.
+// +
+// 2. Оголосіть всередині декоратора змінну newConstructor: Function та проініціалізуйте її
+// функціональним виразом. Новий конструктор повинен:
+// a. виводити в консоль повідомлення "Creating new instance"
+// b. виводити переданий параметр (ім'я класу).
+// c. створювати нову властивість age зі значенням 30.
+// +
+// 3. Проініціалізуйте прототип нового конструктора об'єктом, створеним на основі прототипу
+// переданого класу, використовуючи Object.create() або Object.setPrototypeOf().
+// +
+// 4. Додайте новий метод до прототипу нового конструктора printLibrarian(), який повинен виводити в
+// консоль рядок `Librarian name: ${this.name}, Librarian age: ${this.age}`.
+// +
+// 5. Поверніть з декоратора новий конструктор, попередньо перетворивши його на тип <TFunction>.
+// +
+// 6. Застосуйте цей декоратор до класу UniversityLibrarian. Перевірте результат роботи в консолі.
+// +
+// 7. Оголосіть змінну fLibrarian та створіть екземпляр класу UniversityLibrarian. Вкажіть значення Anna
+// для name. Викличте метод printLibrarian()
+
+// const favoriteLibrarian1 = new UL.UniversityLibrarian();
+// console.log(favoriteLibrarian1);
+// favoriteLibrarian1.name = 'Anna';
+// favoriteLibrarian1.printLibrarium(); // помилка!
+// favoriteLibrarian1['printLibrarian']();
+
+// Task 08.03. Method Decorator (writable)
+// 1. Створіть декоратор методу @writable() як фабрику, яка отримує булевий параметр isWritable.
+// Декоратор повинен встановлювати властивість дескриптора writable у передане значення.
+// +
+// 2. Додайте два методи для класу UniversityLibrarian:
+// a. assistFaculty() – виводить у консоль повідомлення «Assisting faculty».
+// b. teachCommunity() – виводить у консоль повідомлення «Teaching community».
+// +
+// 3. Задекоруйте метод assistFaculty() як змінний, а метод teachCommunity() як незмінний.
+// +
+// 4. Спробуйте змінити методи у екземпляра цього класу.
+// const favoriteLibrarian = new UL.UniversityLibrarian();
+// console.log(favoriteLibrarian);
+// favoriteLibrarian.assistFaculty = null;
+// favoriteLibrarian.teachCommunity = null;
+
+// Task 08.04. Method Decorator (timeout)
+// 1. Створіть декоратор методу @timeout() як фабрику, яка отримує числовий параметр – кількість
+// мілісекунд. Метод, до якого застосовується декоратор, повинен запускатися через вказану
+// кількість часу і тільки, якщо користувач дав на це згоду за допомогою підтверджуючого вікна
+// (window.confirm)
+// +
+// 2. Декоратор повинен перевизначати властивість дескриптора value. Нова функція повинна
+// використовувати setTimout() та запускати початковий метод через вказану кількість часу.
+// Поверніть з декоратора новий дескриптор.
+// +
+// 3. Застосуйте декоратор до методу printItem() класу ReferenceItem.
+// +
+// 4. Створіть екземпляр класу Encyclopedia та викличте метод printItem()
+// const refBook1: RefBook = new RefBook(1, 'Enc.', 2022, 3);
+// refBook1.printItem();
+
+// Task 08.05. Parameter Decorator (logParameter)
+// 1. Створіть декоратор параметра методу - @logParameter(), який повинен зберігати індекс
+// параметра, до якого застосовується декоратор у властивість прототипу
+// ${methodName}_decor_params_indexes. Властивість організувати як масив.
+// +
+// 2. Створіть декоратор методу @logMethod(). Декоратор повинен перевизначати метод, до якого він
+// застосовується та повертати новий дескриптор.
+// +
+// 3. Перевизначений метод повинен отримати доступ до індексів, що знаходяться у властивості
+// ${methodName}_decor_params_indexes і для кожного параметра виводити його значення у
+// форматі Method: ${methodName}, ParamIndex: ${ParamIndex}, ParamValue: ${ParamValue}
+// +
+// 4. Задекоруйте метод assistCustomer() та всі його параметри відповідними декораторами.
+// +
+// 5. Створіть екземпляр класу UniversityLibrarian, проініціалізуйте властивість name, викличте метод
+// assistCustomer().
+// const favoriteLibrarian = new UL.UniversityLibrarian();
+// console.log(favoriteLibrarian);
+// favoriteLibrarian.name = 'Anna';
+// favoriteLibrarian.assistCustomer('Name of customer', 'Title of book');
+
+// Task 08.06. Property Decorator
+// 1. Створіть фабричну функцію декоратора властивості @format(pref:string = 'Mr./Mrs.'), яка при
+// застосуванні до властивості форматує його значення – додає префікс pref. Фабрична функція
+// повинна повертати функцію з сигнатурою декоратора властивості, всередині якої необхідно
+// викликати функцію makeProperty(target, propertyName, value => `${pref} ${value}`, value => value);
+// +
+// 2. Функція makeProperty має такий вигляд:
+// function makeProperty<T>(
+// ...
+// }
+// +
+// 3. Додайте функцію makeProperty до decorators.ts
+// +
+// 4. Задекоруйте властивість name класу UniversityLibrarian декоратором @format()
+// +
+// 5. Створіть екземпляр класу UniversityLibrarian. Встановіть значення для властивості name, потім
+// отримайте його та виведіть у консоль.
+// const favoriteLibrarian = new UL.UniversityLibrarian();
+// favoriteLibrarian.name = 'Anna';
+// console.log(favoriteLibrarian.name);
+// favoriteLibrarian.assistCustomer('Name of customer', 'Title of book');
+
+// Task 08.07. Accessor Decorator
+// 1. Створіть декоратор аксесору @positiveInteger(), який кидає виняток у випадку, якщо властивості
+// встановлюється значення менше 1 і не ціле.
+// +
+// 2. Додайте до класу Encyclopedia приватну числову властивість _copies, а також геттер і сеттер для
+// цієї властивості, які повертають значення та встановлюють значення відповідно.
+// +
+// 3. Задекоруйте гетер або сетер декоратором @positiveInteger().
+// +
+// 4. Створіть екземпляр класу Encyclopedia. Спробуйте встановити різні значення -10, 0, 4.5, 5
+const refBook1: RefBook = new RefBook(1, 'Enc.', 2022, 3);
+// // refBook1.copies = 10;
+// refBook1.copies = -10;
+// console.log(refBook1.copies);

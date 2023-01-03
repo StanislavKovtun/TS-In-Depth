@@ -1,5 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
+import { timeout } from '../decorators';
+
 abstract class ReferenceItem {
 
     #id: number;
@@ -24,11 +26,12 @@ abstract class ReferenceItem {
         this.#id = id;
         console.log('Creating a new ReferenceItem...');
     }
+    @timeout(2000)
     printItem(): void {
         console.log(`${this.title} was published in ${this.year}`);
-        console.log(ReferenceItem.department);
-        console.log(Object.getPrototypeOf(this)); // приклад способу як дістатисть до прототипу
-        console.log(Object.getPrototypeOf(this).constructor.department); // приклад способу як дістатисть до прототипу
+        //    console.log(ReferenceItem.department);
+        //    console.log(Object.getPrototypeOf(this)); // приклад способу як дістатисть до прототипу
+        //    console.log(Object.getPrototypeOf(this).constructor.department); // приклад способу як дістатисть до прототипу
     }
 
     getID(): number {
@@ -38,4 +41,4 @@ abstract class ReferenceItem {
     abstract printCitation(): void;
 }
 
-export {ReferenceItem };
+export { ReferenceItem };
