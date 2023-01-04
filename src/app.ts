@@ -7,7 +7,7 @@ import { BookRequiredFields, PersonBook, UpdatedBook, СreateCustomerFunctionTyp
 // import RefBook from './classes/encyclopedia';
 import {
     printRefBook, calcTotalPages, getAllBooks,
-    getBooksAuthorByIndex, getBookTitlesByCategory, purge, getObjectProperty, createCustomer
+    getBooksAuthorByIndex, getBookTitlesByCategory, purge, getObjectProperty, createCustomer, getBooksByCategory, logCategorySearch, getBooksByCategoryPromise, logSearchResults
 } from './functions';
 
 showHello('greeting', 'TypeScript');
@@ -789,8 +789,6 @@ params = ['Anna', 30, 'Sumy'];
 // Спробуйте замість Book передати Author.
 // +
 
-console.log('------------------------------------------------------');
-
 // 08. Decorators
 // Task 08.01. Class Decorators (sealed)
 // 1. Створіть файл decorators.ts. Створіть декоратор класу @sealed(), щоб запобігти додаванню нових
@@ -922,7 +920,110 @@ console.log('------------------------------------------------------');
 // 3. Задекоруйте гетер або сетер декоратором @positiveInteger().
 // +
 // 4. Створіть екземпляр класу Encyclopedia. Спробуйте встановити різні значення -10, 0, 4.5, 5
-const refBook1: RefBook = new RefBook(1, 'Enc.', 2022, 3);
+// const refBook1: RefBook = new RefBook(1, 'Enc.', 2022, 3);
 // // refBook1.copies = 10;
 // refBook1.copies = -10;
 // console.log(refBook1.copies);
+
+console.log('------------------------------------------------------');
+
+// 09. Asynchronous Patterns
+// Task 09.01. Callback Functions
+// 1. У файлі interfaces.ts створіть інтерфейс для функції зворотного виклику LibMgrCallback, який
+// приймає два параметри:
+// a. err: Error | null,
+// b. titles: string[] | null
+// і нічого не повертає
+// +
+// 2. У файлі interfaces.ts створіть дженерик інтерфейс Callback<T> з двома властивостями:
+// a. err: Error | null,
+// b. data: T | null
+// +
+// 3. У файлі functions.ts створіть функцію getBooksByCategory(), яка приймає два параметри:
+// a. category: Category
+// b. callback – тип, раніше створений інтерфейс
+// і нічого не повертає
+// +
+// 4. Функція повинна використовувати setTimeout() та через 2с виконати наступний код:
+// a. У розділі try: використовувати функцію getBookTitlesByCategory() для отримання
+// заголовків книг за категорією
+// b. Якщо знайшли книги, то викликати функцію зворотного виклику та передати два
+// параметри: null та знайдені книги
+// c. Якщо не знайшли книг, то кинути виняток throw new Error('No books found.');
+// d. У секції catch: викликати функцію зворотного виклику та передати два параметри error
+// і null.
+// +
+// 5. Створіть функцію logCategorySearch(), яка має сигнатуру, описану в інтерфейсі LibMgrCallback
+// або Callback. Якщо прийшов об'єкт помилки, то вивести властивість err.message, інакше
+// вивести назви книг.
+// +
+// 6. Викличте функцію getBooksByCategory() та передайте їй необхідні аргументи. Додайте
+// виведення повідомлень у консоль перед та після виклику цієї функції. Використовуйте
+// Category.JavaScript та Category.Software як значення першого параметра.
+
+// console.log('begin');
+// getBooksByCategory(Category.JavaScript, logCategorySearch);
+// getBooksByCategory(Category.Software, logCategorySearch);
+// console.log('end');
+
+// Task 09.02. Promises
+// 1. Створіть функцію getBooksByCategoryPromise(), яка приймає один параметр – category та
+// повертає проміс – масив заголовків книг.
+// +
+// 2. Використовуйте new Promise((resolve, reject) => { setTimeout(() => {…}, 2000) }); Додайте код,
+// аналогічний функції getBooksByCategory(), тільки тепер використовуйте resolve() та reject().
+// Поверніть із функції створений проміс.
+// +
+// 3. Викличте функцію getBooksByCategoryPromise() та зареєструйте функції зворотного виклику за
+// допомогою методів then та catch. Додайте виведення повідомлень у консоль перед та після
+// виклику цієї функції. Використовуйте Category.JavaScript та Category.Software як значення
+// параметра.
+// console.log('begin');
+// getBooksByCategoryPromise(Category.JavaScript)
+//    .then(titles => console.log(titles))
+//    .catch(reason => console.log(reason))
+//    .finally(() => console.log('complete!'));
+// getBooksByCategoryPromise(Category.Software)
+//    .then(titles => console.log(titles))
+//    .catch(reason => console.log(reason))
+//    .finally(() => console.log('complete!'));
+// console.log('end');
+// 4. Поверніть кількість знайдених книг із функції, зареєстрованої за допомогою then().
+// Зареєструйте за допомогою іншого методу then() функцію, яка повинна вивести в консоль
+// кількість знайдених книг.
+console.log('begin');
+getBooksByCategoryPromise(Category.JavaScript)
+    .then(titles => {
+        console.log(titles);
+        // return titles.length;
+        return Promise.resolve(titles.length); // створюємо новий проміс (...or new Promise)
+    })
+    .then(n => console.log(n))
+    .catch(reason => console.log(reason))
+    .finally(() => console.log('complete!'));
+getBooksByCategoryPromise(Category.Software)
+    .then(titles => console.log(titles))
+    .catch(reason => console.log(reason))
+    .finally(() => console.log('complete!'));
+console.log('end');
+// 5. У файлі types.ts створіть аліас типу Unpromisify<T>, який повинен повертати тип значення
+// промісу.
+// +
+// 6. Отримайте тип значення функції getBooksByCategoryPromise(), що повертається,
+// використовуючи typeof оператор і утиліту ReturnType
+// +
+// 7. Застосуйте Unpromisify<T> до отриманого типу, який повертає функція
+// getBooksByCategoryPromise()
+// +
+
+// Task 09.03. Async Functions
+// 1. Створіть асинхронну функцію logSearchResults() у файлі funtions.ts. Функція повинна
+// використовувати функцію getBooksByCategoryPromise, отримувати та виводити в консоль
+// кількість знайдених книг.
+// +
+// 2. Викличте цю функцію. Вкажіть значення параметра Category.JavaScript. Додайте вивід у
+// консоль до та після виклику функції. Опрацюйте помилку за допомогою catch
+console.log('begin');
+logSearchResults(Category.JavaScript);
+logSearchResults(Category.Software).catch(err => console.log(err));
+console.log('end');

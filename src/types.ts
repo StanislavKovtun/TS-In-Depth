@@ -1,4 +1,4 @@
-import { createCustomer } from './functions';
+import { createCustomer, getBooksByCategoryPromise } from './functions';
 import { Author, Book, Person } from './interfaces';
 
 // export type Book = {
@@ -47,20 +47,8 @@ export type RemoveProps<T extends object, TProps extends keyof T> = {
 export type BookRequiredPropsType = RemoveProps<Book, BookOptionalProps>;
 export type BookOptionalPropsType = RemoveProps<Book, BookRequiredProps>;
 
-// Автор: Olena_Hlukhovska@epam.com
-// 4. Створіть утиліти RequiredProps<T> та OptionalProps<T> у файлі types.ts, які повертають union тип
-// required та optional властивостей об'єкта. Використовуйте mapped type для перебору ключів T та
-// conditional type для трансформації значень ключів типу T. Додайте дженерик обмеження для T
-// розширивши тип object у RequiredProps та OptionalProps.
-// +
-// 5. Оголосіть аліас типу BookRequiredProps та BookOptionalProps, використовуючи інтерфейс Book та
-// утиліти RequiredProps та OptionalProps. Спробуйте замість Book передати примітивний тип.
-// +
-// 6. Створіть утиліту RemoveProps <T extends object, TProps extends keyof T>, яка видаляє властивості
-// TProps з переданого типу T.
-// +
-// 7. Оголосіть аліас типу BookRequiredPropsType та BookOptionalPropsType, використовуючи
-// інтерфейс Book, аліаси типу BookRequiredProps та BookOptioalProps та утиліту RemoveProps
-// Спробуйте замість Book передати Author.
-// +
+export type Unpromisify<T> = T extends Promise<infer R> ? R : never;
+export type UnArray<T> = T extends Array<infer R> ? R : never;
 
+type pr = Unpromisify<ReturnType<typeof getBooksByCategoryPromise>>;
+type pr2 = UnArray<Unpromisify<ReturnType<typeof getBooksByCategoryPromise>>>;
